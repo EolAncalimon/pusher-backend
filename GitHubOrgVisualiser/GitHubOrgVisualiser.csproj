@@ -176,6 +176,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BallsData.cs" />
+    <Compile Include="Models\NetworkCollab.cs" />
     <Compile Include="Models\NetworkData.cs" />
     <Compile Include="Models\RadarData.cs" />
     <Compile Include="Models\RadarPoint.cs" />
