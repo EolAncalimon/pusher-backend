@@ -11,7 +11,10 @@ namespace GitHubOrgVisualiser.Models
         public NetworkData()
         {
             Network = new Dictionary<string, List<string>>();
+            NetworkCollabs = new List<NetworkCollab>();
         }
         public Dictionary<string, List<string>> Network { get; set; } 
+
+        public List<NetworkCollab> NetworkCollabs { get; set; } 
     }
 }
