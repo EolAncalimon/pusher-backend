@@ -21,22 +21,24 @@ namespace GitHubOrgVisualiser.Controllers
             var token = new Credentials("b4d4ee29cbb858da8cb54a3ca80ebb5bc119f2c3");
             var client = new GitHubClient(new ProductHeaderValue("pugs-not-drugs")) { Credentials = token };
 
-            var orgRepos = await client.Repository.GetAllForOrg(orgName);
+            var orgMembers = await client.Organization.Member.GetAll(orgName);
+
 
             var networkData = new  NetworkData();
-            foreach (var repo in orgRepos)
+            networkData.NetworkCollabs = orgMembers.Select(x => new NetworkCollab
             {
-                var contributors = await client.Repository.GetAllContributors(orgName, repo.Name);
-                networkData.NetworkCollabs.AddRange(contributors.Select(collab => new NetworkCollab
-                {
-                    Name = collab.Login,
-                    AvatarUrl = collab.AvatarUrl
-                }).ToList());
+                Name = x.Login,
+                AvatarUrl = x.AvatarUrl
+            }).ToList();
 
-                networkData.Network.Add(repo.Name, contributors.Select(x=> x.Login).ToList());
+            foreach (var member in orgMembers)
+            {
+                var following = await client.User.Followers.GetAllFollowing(member.Login);
+                var filtered = following.Where(x => orgMembers.Any(m => m.Login == x.Login));
+
+                networkData.Network.Add(member.Login, filtered.Select(x=> x.Login).ToList());
             }
 
-            networkData.NetworkCollabs = networkData.NetworkCollabs.GroupBy(x => x.Name).Select(y => y.First()).ToList();
             return networkData;
         }
     }
